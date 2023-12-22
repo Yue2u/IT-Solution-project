@@ -28,4 +28,4 @@ def runtext(request):
 
 class TextView(viewsets.ModelViewSet):
     queryset = Text.objects.order_by("-get_time")
-    serializer_class = TextSerializer 
+    serializer_class = TextSerializer
