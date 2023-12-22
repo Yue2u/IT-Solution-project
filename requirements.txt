@@ -1,0 +1,6 @@
+django==5.0
+black==23.12.0
+flake8==6.1.0
+isort==5.13.2
+opencv-python==4.8.0.74 # install python3-opencv
+gunicorn==21.2.0
