@@ -2,9 +2,11 @@ from wsgiref.util import FileWrapper
 
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET
+from rest_framework import viewsets
 
 from .models import Text
 from .runtext import generate_running_text_video
+from .serializers import TextSerializer
 
 
 @require_GET
@@ -22,3 +24,8 @@ def runtext(request):
     response = HttpResponse(video, content_type="video/avi")
     response["Content-Disposition"] = "attachment; filename=runtext_video.avi"
     return response
+
+
+class TextView(viewsets.ModelViewSet):
+    queryset = Text.objects.order_by("-get_time")
+    serializer_class = TextSerializer 
