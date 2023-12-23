@@ -5,4 +5,4 @@ isort==5.13.2
 opencv-python==4.8.0.74 # install python3-opencv
 gunicorn==21.2.0
 djangorestframework==3.14.0
-pyttsx3==2.90 # install espeak
+pyttsx3==2.71 # install espeak
