@@ -1,12 +1,15 @@
 import argparse
+import os
+import string
+import subprocess
 
 import cv2
 import numpy as np
+import pyttsx3
 
 
 def generate_running_text_video(input_text, output_path="running_text_video.avi"):
-    if len(input_text) < 10:
-        input_text += " " * (11 - len(input_text))
+    input_text += " " * 5
     width, height = 100, 100
     fps = 60
     duration = 3
@@ -41,6 +44,45 @@ def generate_running_text_video(input_text, output_path="running_text_video.avi"
 
         text_x -= int((width + text_width) / (duration * fps))
     video_writer.release()
+    return output_path
+
+
+def generate_audio(input_text, output_path="running_text_audio.avi"):
+    engine = pyttsx3.init()
+    engine.setProperty("rate", len(input_text.split()) * 30)
+    engine.setProperty("volume", 0.1)
+
+    engine.save_to_file(input_text, output_path)
+    engine.runAndWait()
+    return output_path
+
+
+def merge_video_audio(video_path, audio_path, output_path):
+    # Command to ffmpeg to merge video and audio
+    ffmpeg_command = [
+        "ffmpeg",
+        "-i",
+        video_path,
+        "-i",
+        audio_path,
+        "-f",
+        "avi",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "copy",
+        "-y",
+        output_path,
+    ]
+
+    # Execute the ffmpeg command
+    process = subprocess.Popen(ffmpeg_command)
+    process.wait()
+
+    os.remove(video_path)
+    os.remove(audio_path)
+
+    return output_path
 
 
 if __name__ == "__main__":
@@ -51,6 +93,18 @@ if __name__ == "__main__":
     parser.add_argument("text", type=str, help="Your text here")
     args = parser.parse_args()
 
-    generate_running_text_video(
-        args.text, "running_text_video.avi"
-    )  # "Привет, мир, как дела, фофоофофофофоофоф?!"
+    flag = True
+    for el in args.text:
+        if el not in string.printable:
+            flag = False
+
+    if flag:
+        video_path = generate_running_text_video(
+            args.text, "running_text_video.avi"
+        )  # "Привет, мир, как дела, фофоофофофофоофоф?!"
+        audio_path = generate_audio(args.text, "running_text_audio.mp3")
+        merge_video_audio(video_path, audio_path, "voiced_running_text_video.avi")
+    else:
+        video_path = generate_running_text_video(
+            args.text, "voiced_running_text_video.avi"
+        )  # "Привет, мир, как дела, фофоофофофофоофоф?!"

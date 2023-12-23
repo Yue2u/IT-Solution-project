@@ -1,3 +1,4 @@
+import subprocess
 from wsgiref.util import FileWrapper
 
 from django.http import HttpResponse
@@ -5,7 +6,6 @@ from django.views.decorators.http import require_GET
 from rest_framework import viewsets
 
 from .models import Text
-from .runtext import generate_running_text_video
 from .serializers import TextSerializer
 
 
@@ -18,8 +18,10 @@ def runtext(request):
     else:
         text = "Here could be your text"
 
-    generate_running_text_video(text, "runtext_video.avi")
-    video = FileWrapper(open("runtext_video.avi", "rb"))
+    # generate_running_text_video(text, "runtext_video.avi")
+    process = subprocess.Popen(("python", "main/runtext.py", f"{text}"))
+    process.wait()
+    video = FileWrapper(open("voiced_running_text_video.avi", "rb"))
 
     response = HttpResponse(video, content_type="video/avi")
     response["Content-Disposition"] = "attachment; filename=runtext_video.avi"
