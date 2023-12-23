@@ -10,6 +10,7 @@ RUN apt update
 
 COPY ./requirements.txt /usr/src/runtext/requirements.txt
 RUN apt install -y python3-opencv
+RUN apt install -y espeak espeak-ng
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r /usr/src/runtext/requirements.txt
 
